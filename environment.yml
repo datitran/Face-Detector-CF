@@ -1,0 +1,25 @@
+name: face-detector-cf
+channels: !!python/tuple
+- defaults
+dependencies:
+- click=6.6=py27_0
+- flask=0.11.1=py27_0
+- itsdangerous=0.24=py27_0
+- jinja2=2.8=py27_1
+- jpeg=8d=2
+- libpng=1.6.17=0
+- markupsafe=0.23=py27_2
+- mkl=11.3.3=0
+- numpy=1.10.4=py27_2
+- opencv=2.4.10=np110py27_1
+- openssl=1.0.2j=0
+- pip=9.0.1=py27_0
+- python=2.7.12=1
+- readline=6.2=2
+- setuptools=27.2.0=py27_0
+- sqlite=3.13.0=0
+- tk=8.5.18=0
+- werkzeug=0.11.11=py27_1
+- wheel=0.29.0=py27_0
+- zlib=1.2.8=3
+prefix: /opt/conda/envs/face-detector-cf
