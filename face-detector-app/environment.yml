@@ -4,15 +4,18 @@ channels: !!python/tuple
 dependencies:
 - click=6.6=py27_0
 - flask=0.11.1=py27_0
+- freetype=2.5.5=1
 - itsdangerous=0.24=py27_0
 - jinja2=2.8=py27_1
 - jpeg=8d=2
+- lcms=1.19=0
 - libpng=1.6.17=0
 - markupsafe=0.23=py27_2
 - mkl=11.3.3=0
 - numpy=1.10.4=py27_2
 - opencv=2.4.10=np110py27_1
 - openssl=1.0.2j=0
+- pil=1.1.7=py27_2
 - pip=9.0.1=py27_0
 - python=2.7.12=1
 - readline=6.2=2
@@ -22,4 +25,7 @@ dependencies:
 - werkzeug=0.11.11=py27_1
 - wheel=0.29.0=py27_0
 - zlib=1.2.8=3
+- pip:
+  - flask-cors==3.0.2
+  - six==1.10.0
 prefix: /opt/conda/envs/face-detector-cf
