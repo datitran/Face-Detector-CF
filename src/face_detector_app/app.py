@@ -1,9 +1,9 @@
 import os
 import cv2
-from StringIO import StringIO
 import numpy as np
-from flask import Flask, request, render_template, jsonify
 from PIL import Image
+from StringIO import StringIO
+from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
 
@@ -15,7 +15,7 @@ def detect_faces(image):
     faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
     img = Image.open(StringIO(image))
     img_cv2 = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2RGBA)
-    gray = cv2.cvtColor(img_cv2, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(img_cv2, cv2.COLOR_RGBA2GRAY)
 
     faces = faceCascade.detectMultiScale(
         gray,
@@ -28,6 +28,7 @@ def detect_faces(image):
         return faces.tolist()
     except:
         return []
+
 
 @app.route("/")
 def main():
@@ -42,9 +43,8 @@ def prediction():
     if request.method == "POST":
         image = request.data
         face_coordinates = detect_faces(image)
-
         return jsonify(faces=face_coordinates)
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port)

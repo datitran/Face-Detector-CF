@@ -1,8 +1,11 @@
 # Face-Detector-CF
 
-Enabling OpenCV on Cloud Foundry
+A simple example demonstrating how to use [OpenCV](http://opencv.org/) on Cloud Foundry to recognize faces through a webcam.
 
 # To-Do
-- Fix image error when pushing to CF with sample.mp4
 - Migrate code from python 2 to 3 (need to build customized opencv without GTK)
-- Use WebRTC to enable webcam through the browser
+
+## Copyright
+
+See [LICENSE](LICENSE) for details.
+Copyright (c) 2016 [Dat Tran](http://www.dat-tran.com/), [Andreas Fleig](https://github.com/andreasf).
