@@ -1,11 +1,12 @@
 (function() {
     "use strict";
 
-    function FaceDetector(videoId, grabCanvasId, outputImgId) {
-        this.video = document.getElementById("pretty_faces");
-        this.canvas = document.getElementById("framegrab");
+    function FaceDetector(videoId, grabCanvasId, outputCanvasId) {
+        this.video = document.getElementById(videoId);
+        this.canvas = document.getElementById(grabCanvasId);
         this.canvasCtx = this.canvas.getContext("2d");
-        this.faces = document.getElementById("faces");
+        this.rectangles = document.getElementById(outputCanvasId);
+        this.rectanglesCtx = this.rectangles.getContext("2d");
     }
 
     FaceDetector.prototype = {
@@ -27,6 +28,8 @@
             this.video.addEventListener("canplay", function() {
                 self.canvas.width = self.video.videoWidth;
                 self.canvas.height = self.video.videoHeight;
+                self.rectangles.width = self.video.videoWidth;
+                self.rectangles.height = self.video.videoHeight;
 
                 self.scheduleFrameGrab();
             });
@@ -37,7 +40,7 @@
 
             window.setTimeout(function() {
                 self.grabFrame();
-            }, 1000);
+            }, 500);
         },
 
         grabFrame: function() {
@@ -47,23 +50,37 @@
             this.canvas.toBlob(function(imageData) {
                 var postImageReq = new XMLHttpRequest();
                 postImageReq.open("POST", "/prediction", true);
-                postImageReq.responseType = "arraybuffer";
+                postImageReq.responseType = "json";
 
                 postImageReq.onload = function(event) {
-                    var imageBlob = new Blob([postImageReq.response], {type: "image/jpeg"});
-                    self.url = URL.createObjectURL(imageBlob);
+                    var faces = postImageReq.response.faces;
 
-                    faces.addEventListener("onload", function() {
-                        console.log("revoking url");
-                        URL.revokeObjectURL(self.url);
-                    });
-                    self.faces.src = self.url;
+                    self.drawFaces(faces);
+                    self.scheduleFrameGrab();
                 };
 
                 postImageReq.send(imageData);
             }, "image/jpeg", 70);
 
-            this.scheduleFrameGrab();
+        },
+
+        drawFaces: function(faces) {
+            this.rectanglesCtx.clearRect(0, 0, this.rectangles.width, this.rectangles.height);
+
+            for (var i=0; i<faces.length; i++) {
+                this.drawFace(faces[i]);
+            }
+        },
+
+        drawFace: function(coordinates) {
+            var x = coordinates[0],
+                y = coordinates[1],
+                w = coordinates[2],
+                h = coordinates[3];
+
+            this.rectanglesCtx.strokeStyle = "green";
+            this.rectanglesCtx.lineWidth = 2;
+            this.rectanglesCtx.strokeRect(x, y, w, h);
         },
 
         handleSuccess: function(stream) {

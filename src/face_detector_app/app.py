@@ -2,12 +2,10 @@ import os
 import cv2
 from StringIO import StringIO
 import numpy as np
-from flask import Flask, request, make_response, render_template
-from flask_cors import CORS, cross_origin
+from flask import Flask, request, render_template, jsonify
 from PIL import Image
 
 app = Flask(__name__)
-cors = CORS(app)
 
 # Get port from environment variable or choose 9099 as local default
 port = int(os.getenv("PORT", 9099))
@@ -26,16 +24,10 @@ def detect_faces(image):
         minSize=(30, 30),
         flags=cv2.cv.CV_HAAR_SCALE_IMAGE
     )
-
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img_cv2, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-    img_pil = Image.fromarray(img_cv2)
-    buffer = StringIO()
-    img_pil.save(buffer, format="JPEG")
-
-    return buffer.getvalue()
-
+    try:
+        return faces.tolist()
+    except:
+        return []
 
 @app.route("/")
 def main():
@@ -49,10 +41,9 @@ def prediction():
     """
     if request.method == "POST":
         image = request.data
-        image_faces = detect_faces(image)
-        response = make_response(image_faces)
-        response.headers["Content-Type"] = "image/jpeg"
-        return response
+        face_coordinates = detect_faces(image)
+
+        return jsonify(faces=face_coordinates)
 
 
 if __name__ == "__main__":
