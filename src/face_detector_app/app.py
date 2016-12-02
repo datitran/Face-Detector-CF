@@ -1,8 +1,8 @@
 import os
-import base64
 import cv2
+from StringIO import StringIO
 import numpy as np
-from flask import Flask, request
+from flask import Flask, request, make_response, render_template
 from flask_cors import CORS, cross_origin
 from PIL import Image
 
@@ -15,8 +15,8 @@ port = int(os.getenv("PORT", 9099))
 
 def detect_faces(image):
     faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-    img = Image.open(image)
-    img_cv2 = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+    img = Image.open(StringIO(image))
+    img_cv2 = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2RGBA)
     gray = cv2.cvtColor(img_cv2, cv2.COLOR_BGR2GRAY)
 
     faces = faceCascade.detectMultiScale(
@@ -30,23 +30,29 @@ def detect_faces(image):
     for (x, y, w, h) in faces:
         cv2.rectangle(img_cv2, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    return base64.b64encode(img_cv2)
+    img_pil = Image.fromarray(img_cv2)
+    buffer = StringIO()
+    img_pil.save(buffer, format="JPEG")
+
+    return buffer.getvalue()
 
 
 @app.route("/")
 def main():
-    return "Hello World!"
+    return render_template("index.html")
 
 
 @app.route("/prediction", methods=["POST"])
 def prediction():
     """
-    curl -i -X POST -F files=@abba.png http://0.0.0.0:9099/prediction
+    curl -X POST -v -H "Content-Type: image/png" --data-binary @abba.png http://127.0.0.1:9099/prediction -o foo.jpg
     """
     if request.method == "POST":
-        image = request.files["files"]
+        image = request.data
         image_faces = detect_faces(image)
-        return str(image_faces)
+        response = make_response(image_faces)
+        response.headers["Content-Type"] = "image/jpeg"
+        return response
 
 
 if __name__ == "__main__":

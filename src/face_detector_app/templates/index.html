@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        video, canvas {
+            width: 32px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <video id="pretty_faces" autoplay></video>
+    </div>
+
+    <div>
+        <canvas id="framegrab"></canvas>
+    </div>
+
+    <div>
+        <img id="faces"/>
+    </div>
+
+    <div id="error"></div>
+</body>
+    <script src="static/js/video.js"></script>
+    <script>
+        var faceDetector = new FaceDetector("pretty_faces", "framegrab", "faces");
+        faceDetector.start();
+    </script>
+</html>
